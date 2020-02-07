@@ -5,10 +5,10 @@ import com.badoo.liveprof.plugin.LiveProfStorage
 import com.badoo.liveprof.plugin.Settings
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.LineMarkersPass
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import junit.framework.TestCase
 
-class LineMarkerTest  : LightJavaCodeInsightFixtureTestCase() {
+class LineMarkerTest  : LightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() =
             "src/test/kotlin/com/badoo/liveprof/plugin/test/testData/"
 
