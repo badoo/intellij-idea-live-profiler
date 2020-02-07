@@ -50,7 +50,7 @@ IDE Setup
 You will need IDEA Community Edition or IDEA Ultimate.
 PhpStorm can't have `Plugin DevKit` installed
 
-1. Checkout source, i.e. ```$ git clone https://github.com/shagtv/intellij-idea-live-profiler.git```
+1. Checkout source, i.e. ```$ git clone https://github.com/badoo/intellij-idea-live-profiler```
 2. Install `Gradle` plugin in IDEA
 3. Open project
 4. Idea will suggest to import Gradle configuration, agree and chose `Use gradle 'wrapper' task configuration`
