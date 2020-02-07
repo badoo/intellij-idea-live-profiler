@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><plugins>
-  <plugin id="com.badoo.liveprof.plugin" version="0.1.2" url="https://plugins.jetbrains.com/plugin/13767-live-profiler/versions">
+  <plugin id="com.badoo.liveprof.plugin" version="0.1.3" url="https://plugins.jetbrains.com/plugin/13767-live-profiler/versions">
     <idea-version since-build="181.3"/>
     <name>Live Profiler</name>
     <description>
@@ -26,6 +26,12 @@
     </description>
     <change-notes>
       <![CDATA[
+
+      <p>v0.1.3 [07.02.2020]<br>
+      <em>- Fixed conflicting names</em><br>
+      <em>- Added documentation in readme</em><br>
+      <em>- Fixed deprecated class in the test</em><br>
+      </p>
 
       <p>v0.1.2 [08.02.2020]<br>
       <em>- Moved settings to tools category</em><br>

@@ -8,7 +8,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 import java.util.concurrent.ConcurrentHashMap
 
 
-@State(name = "LiveProfStorage", storages = [com.intellij.openapi.components.Storage("LiveProfStorage.xml", roamingType = RoamingType.DISABLED)])
+@State(name = "LiveProfMethodsStorage", storages = [com.intellij.openapi.components.Storage("LiveProfStorage.xml", roamingType = RoamingType.DISABLED)])
 class LiveProfStorage : PersistentStateComponent<LiveProfStorage> {
 
     var liveprofMethods: ConcurrentHashMap<String, String>? = null

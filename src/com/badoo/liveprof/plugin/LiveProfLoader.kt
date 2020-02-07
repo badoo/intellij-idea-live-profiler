@@ -21,18 +21,14 @@ class LiveProfLoader {
             val url = Settings.getInstance().urls!!.getLiveProfMethods!!
             val methods = runHttp(url, MethodsMap::class.java)
 
-            if (methods != null) {
-                LiveProfStorage.getInstance().update(methods)
-                Notification.debug("Component LiveProf was updated")
-            } else {
-                Notification.error("Component LiveProf was not updated, will try later")
-            }
+            LiveProfStorage.getInstance().update(methods)
+            Notification.debug("LiveProf: " + methods.size + " methods was updated")
 
             return methods
         } catch (ex: IOException) {
-            Notification.error("Couldn't load component LiveProf methods: " + ex.toString())
+            Notification.error("LiveProf: couldn't load methods: " + ex.toString())
         } catch (ex: JsonSyntaxException) {
-            Notification.error("Couldn't parse component LiveProf methods: " + ex.toString())
+            Notification.error("LiveProf: couldn't parse methods: " + ex.toString())
         }
         return null
     }
@@ -41,11 +37,12 @@ class LiveProfLoader {
         try {
             val url = Settings.getInstance().urls!!.getLiveProfMethodInfo!!
             val methodInfo = runHttp(url + URLEncoder.encode(method, "UTF-8"), Array<MethodInfo>::class.java)
+            Notification.debug("LiveProf: " + method + " method info was loaded")
             return methodInfo
         } catch (ex: IOException) {
-            Notification.error("Couldn't load component LiveProf methodInfo: " + ex.toString())
+            Notification.error("LiveProf: couldn't load " + method + " method info: " + ex.toString())
         } catch (ex: JsonSyntaxException) {
-            Notification.error("Couldn't parse component LiveProf methodInfo: " + ex.toString())
+            Notification.error("LiveProf: couldn't parse " + method + " method info: " + ex.toString())
         }
         return null
     }

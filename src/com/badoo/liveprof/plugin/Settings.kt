@@ -7,7 +7,7 @@ import com.intellij.openapi.components.State
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Tag
 
-@State(name = "Settings", storages = [com.intellij.openapi.components.Storage("liveProfSettings.xml", roamingType = RoamingType.DEFAULT)])
+@State(name = "LiveProfSettings", storages = [com.intellij.openapi.components.Storage("liveProfSettings.xml", roamingType = RoamingType.DEFAULT)])
 class Settings : PersistentStateComponent<Settings> {
 
     @Tag("Urls")

@@ -1,14 +1,14 @@
 <idea-plugin>
   <id>com.badoo.liveprof.plugins</id>
   <name>Live Profiler</name>
-  <version>0.1.2</version>
+  <version>0.1.3</version>
   <vendor email="timur.shagiakhmetov@magiclab.co" url="https://www.linkedin.com/in/shagtv/">timur.shagiakhmetov@Magic Lab</vendor>
 
   <description>
     <![CDATA[
       A plugin for Live Profiler.<br>
 
-      <a href="http://liveprof.org/">Live Profiler</a> is a system-wide performance monitoring system in use at Badoo that is built on top of XHProf or its forks (Uprofiler or Tideways).<br>
+      <a href="https://github.com/badoo/liveprof-ui">Live Profiler</a> is a system-wide performance monitoring system in use at Badoo that is built on top of XHProf or its forks (Uprofiler or Tideways).<br>
       Live Profiler continually gathers function-level profiler data from production tier by running a sample of page requests under XHProf.<br>
 
       <h2>Features</h2>
@@ -30,7 +30,13 @@
   <change-notes>
     <![CDATA[
 
-      <p>v0.1.2 [08.02.2020]<br>
+      <p>v0.1.3 [07.02.2020]<br>
+      <em>- Fixed conflicting names</em><br>
+      <em>- Added documentation in readme</em><br>
+      <em>- Fixed deprecated class in the test</em><br>
+      </p>
+
+      <p>v0.1.2 [06.02.2020]<br>
       <em>- Moved settings to tools category</em><br>
       <em>- Covered by tests</em><br>
       </p>

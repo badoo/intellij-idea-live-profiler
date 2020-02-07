@@ -23,7 +23,7 @@ class PreloadingActivity : PreloadingActivity() {
         if (liveProfDelay > day) {
             liveProfDelay = day
         }
-        Notification.debug("Component LiveProf methods update interval: " + liveProfDelay + " seconds")
+        Notification.debug("LiveProf: methods update interval: " + liveProfDelay + " seconds")
         TimerStorage.addTimer(liveProfDelay / 60) {
             ProgressManager.getInstance().run(UpdateLiveProfMethodsTask())
         }
