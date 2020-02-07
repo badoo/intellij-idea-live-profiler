@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><plugins>
+  <plugin id="com.badoo.liveprof.plugin" version="0.1.2" url="https://plugins.jetbrains.com/plugin/13767-live-profiler/versions">
+    <idea-version since-build="181.3"/>
+    <name>Live Profiler</name>
+    <description>
+      <![CDATA[
+      A plugin for Live Profiler.<br>
+
+      <a href="http://liveprof.org/">Live Profiler</a> is a system-wide performance monitoring system in use at Badoo that is built on top of XHProf or its forks (Uprofiler or Tideways).<br>
+      Live Profiler continually gathers function-level profiler data from production tier by running a sample of page requests under XHProf.<br>
+
+      <h2>Features</h2>
+
+      <ul>
+        <li>Line marker shows a last date when the method was called</li>
+        <li>A link to the method usage page i Live Profiler interface</li>
+        <li>List with last app called the method sorted by time</li>
+      </ul>
+
+      <br>
+
+      <a href="https://github.com/badoo/liveprof">LiveProf</a> |
+      <a href="https://github.com/badoo/liveprof-ui">LiveProf UI</a> |
+      <a href="https://github.com/badoo/liveprof">LiveProf UI Demo site</a>
+    ]]>
+    </description>
+    <change-notes>
+      <![CDATA[
+
+      <p>v0.1.2 [08.02.2020]<br>
+      <em>- Moved settings to tools category</em><br>
+      <em>- Covered by tests</em><br>
+      </p>
+
+      <p>v0.1.1 [07.02.2020]<br>
+      <em>- Fixed url descriptions in settings</em><br>
+      </p>
+
+      <p>v0.1.0 [05.02.2020]<br>
+      <em>- Method usage with last date</em><br>
+      </p>
+
+      ]]>
+    </change-notes>
+  </plugin>
+</plugins>

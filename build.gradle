@@ -1,0 +1,270 @@
+import groovy.xml.MarkupBuilder
+import groovy.xml.XmlUtil
+import groovy.xml.*
+import java.util.regex.Matcher
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+        maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
+        maven { url "https://mvnrepository.com/artifact/org.apache.commons/commons-lang3" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+    }
+}
+
+plugins {
+    id "org.jetbrains.intellij" version "0.4.15"
+    id 'com.palantir.git-version' version "0.12.2"
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+intellij {
+    version ideaVersion
+    updateSinceUntilBuild false
+    plugins = [
+            'java',
+            "com.jetbrains.php:${phpPluginVersion}",
+            'CSS',
+            'java-i18n',
+            'properties'
+    ]
+    pluginName 'Live Profiler'
+}
+
+dependencies {
+    compile "javax.websocket:javax.websocket-client-api:1.1"
+    implementation 'org.eclipse.jetty.websocket:websocket-client:9.4.24.v20191120'
+    compile "org.glassfish:javax.json:1.1.4"
+    compile 'org.glassfish.tyrus.bundles:tyrus-standalone-client:1.15'
+    compile 'org.apache.sshd:sshd-mina:2.3.0'
+    compile 'org.slf4j:slf4j-api:1.7.25'
+    compile 'org.slf4j:slf4j-simple:1.6.4'
+    implementation 'org.apache.commons:commons-lang3:3.1'
+    implementation 'commons-lang:commons-lang:2.6'
+}
+
+javafx {
+    // see notice about PhpStorm Java runtime below
+    // the only thing that starting from PhpStorm 2019.2, it's built with Java v11
+    // 
+    version = 11
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.swing' ]
+    // IDEA contains JavaFx, there is no need to include all platform libraries
+    configuration = 'compileOnly'
+}
+
+sourceSets {
+    main.java.srcDirs = ['src']
+    main.kotlin.srcDirs = ['src']
+    main.resources.srcDirs = ['resources']
+    test.kotlin.srcDirs = ['src/test/kotlin']
+}
+
+/*
+ PhpStorm up to v2019.2 is built and distributed with Java v11 and its
+ Java Runtime only recognizes class file versions up to 52.0
+ Without following lines we'll get an incompatible files (that ones which written in Java)
+ this is specifically for Java-files compilation
+ */
+targetCompatibility = javaRuntimeVersion
+sourceCompatibility = javaRuntimeVersion
+/*
+  error: Super calls to Java default methods are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'
+  this is specifically for Kotlin-files compilation
+ */
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "${javaVersion}"
+    }
+}
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
+task runStorm {
+    dependsOn buildPlugin
+    doLast {
+
+        ext.getStormDir = {
+            def dir = file(System.getenv('HOME') + "/Library/Application Support/").listFiles().findAll {
+                File file ->
+                    file.name.startsWith("PhpStorm20") && file.isDirectory()
+            }.sort()
+
+            if (dir.isEmpty()) {
+                // ant.fail("Can't find ~/Library/Application Support/PhpStorm20*")
+                return null
+            }
+
+            def lastStormDir = dir.last()
+
+            return lastStormDir
+        }
+
+        ext.getStormToolbarDir = {
+            // /Users/mgalanin/Library/Application Support/JetBrains/Toolbox/apps/PhpStorm/ch-0/191.7479.51/PhpStorm.app.plugins/Live Profiler/lib/
+
+            def dir = file(System.getenv('HOME') + "/Library/Application Support/JetBrains/Toolbox/apps/PhpStorm/ch-0").listFiles().findAll {
+                File file ->
+                    // file.name.startsWith("PhpStorm20") && file.isDirectory()
+                if (file.isDirectory()) {
+                    def contains = file.listFiles().findAll { File f -> f.name == "PhpStorm.app.plugins" }
+                    return !contains.empty
+                } else {
+                    return false
+                }
+            }.sort()
+
+            if (dir.isEmpty()) {
+                // ant.fail("Can't find ~/Library/Application Support/PhpStorm20*")
+                return null
+            }
+
+            def lastStormDir = dir.last().path + "/PhpStorm.app.plugins"
+
+            return lastStormDir
+        }
+
+        def stormDir = getStormDir()
+        if (stormDir != null) {
+            println "Using PhpStorm directory: $stormDir"
+            println "Installing plugin version: $version"
+
+            def toDir = "$stormDir/Live Profiler/lib/"
+            delete(file(toDir).listFiles())
+
+            copy {
+                from "build/idea-sandbox/plugins/Live Profiler/lib/"
+                into toDir
+            }
+        }
+
+        def toolboxStormDir = getStormToolbarDir()
+
+        if (toolboxStormDir != null) {
+            println "Using PhpStorm (via toolbox) directory: $toolboxStormDir"
+            println "current version: $version"
+
+            def toDir = "$toolboxStormDir/Live Profiler/lib/"
+            delete(file(toDir).listFiles())
+
+            copy {
+                from "build/idea-sandbox/plugins/Live Profiler/lib/"
+                into toDir
+            }
+        }
+
+        if (stormDir == null && toolboxStormDir == null) {
+            ant.fail("Can't find ~/Library/Application Support/PhpStorm20* and ~/Library/Application Support/JetBrains/Toolbox/apps/PhpStorm/ch-0/*/PhpStorm.app.plugins/")
+        }
+        exec {
+            commandLine './restart_storm.sh'
+        }
+    }
+}
+
+task prepareCeph {
+    dependsOn buildPlugin
+    dependsOn test
+
+    ext.getLastChangelog = { String changeNotes ->
+        def currentVersion = null
+        String lastLog = ""
+        int versions = 1
+
+        changeNotes.readLines().any { String line ->
+            Matcher matcher = line =~ /.*v(\d+\.\d+\.\d+) \[\d{2}\.\d{2}\.\d{4}].*/
+            if (matcher.matches()) {
+                ++versions
+                if (currentVersion != null && versions >= 6) {
+                    return true
+                } else if (currentVersion == null && lastLog.trim() != "") {
+                    ant.fail("There are some lines before last version:\n" + matcher.group(1) + "'" + lastLog.trim() + "'")
+                }
+                if (currentVersion == null) {
+                    println "got version " + matcher.group(1)
+                    currentVersion = matcher.group(1)
+                }
+            }
+            lastLog += line + "\n"
+            return false
+        }
+
+        return [currentVersion, lastLog]
+    }
+
+    doLast {
+        def pluginXml = new XmlParser().parse(file("resources/META-INF/plugin.xml"))
+        def changeNotes = pluginXml['change-notes'].text()
+        def descriptionText = pluginXml['description'].text()
+        def (currentVersion, lastLog) = getLastChangelog(changeNotes)
+        if (currentVersion != version) {
+            ant.fail("Last changelog version ($currentVersion) != build version ($version)")
+        }
+        def pluginXmlVersion = pluginXml['version'].text()
+
+        if (pluginXmlVersion != currentVersion) {
+            ant.fail("Last plugin.xml version ($pluginXmlVersion) != build version ($version)")
+        }
+        println "Build version: $version"
+        println "Found changelog:"
+        println lastLog
+        println "============ end of changelog =============="
+
+        def updatePluginsXmlFile = file("updatePlugins.xml")
+        def parser = new XmlSlurper(false, false)
+        parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+        def updatePluginsXml = parser.parse(updatePluginsXmlFile)
+
+        def pluginNode = updatePluginsXml.plugin.find { it.@id == "com.badoo.liveprof.plugin" }
+        pluginNode.@version = version
+        pluginNode.@url = 'http://rgw.ceph.mlan:7480/idea-plugin/release/intellij-idea-badoo-components-' + version + '.zip'
+
+        pluginNode['description'].replaceNode {
+            description {
+                mkp.yieldUnescaped("<![CDATA[" + descriptionText + "  ]]>")
+            }
+        }
+
+        pluginNode['change-notes'].replaceNode {
+            'change-notes' {
+                mkp.yieldUnescaped("<![CDATA[" + lastLog + "      ]]>")
+            }
+        }
+
+        updatePluginsXmlFile.withWriter { outWriter ->
+            XmlUtil.serialize( updatePluginsXml, outWriter )
+        }
+
+        def details = versionDetails()
+        if (!details.isCleanTag) {
+            ant.fail("It's not a clean tag. Please commit and tag the repo (expecting clean tag 'v$version').")
+        }
+        if (details.lastTag != "v$version") {
+            ant.fail("Bad tag name. Expected: 'v$version', got: '${details.lastTag}'")
+        }
+        exec {
+            commandLine './s3-put.sh', version
+        }
+    }
+}
+
+wrapper {
+    gradleVersion '5.5.1'
+}
+
