@@ -44,25 +44,7 @@ intellij {
 }
 
 dependencies {
-    compile "javax.websocket:javax.websocket-client-api:1.1"
-    implementation 'org.eclipse.jetty.websocket:websocket-client:9.4.24.v20191120'
-    compile "org.glassfish:javax.json:1.1.4"
-    compile 'org.glassfish.tyrus.bundles:tyrus-standalone-client:1.15'
-    compile 'org.apache.sshd:sshd-mina:2.3.0'
-    compile 'org.slf4j:slf4j-api:1.7.25'
-    compile 'org.slf4j:slf4j-simple:1.6.4'
     implementation 'org.apache.commons:commons-lang3:3.1'
-    implementation 'commons-lang:commons-lang:2.6'
-}
-
-javafx {
-    // see notice about PhpStorm Java runtime below
-    // the only thing that starting from PhpStorm 2019.2, it's built with Java v11
-    // 
-    version = 11
-    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.swing' ]
-    // IDEA contains JavaFx, there is no need to include all platform libraries
-    configuration = 'compileOnly'
 }
 
 sourceSets {
