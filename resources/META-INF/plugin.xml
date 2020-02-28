@@ -1,8 +1,8 @@
 <idea-plugin>
   <id>com.badoo.liveprof.plugins</id>
   <name>Live Profiler</name>
-  <version>0.1.4</version>
-  <vendor email="timur.shagiakhmetov@magiclab.co" url="https://www.linkedin.com/in/shagtv/">timur.shagiakhmetov@Magic Lab</vendor>
+  <version>0.1.5</version>
+  <vendor email="timur.shagiakhmetov@magiclab.co" url="https://badootech.badoo.com/">timur.shagiakhmetov@Magic Lab</vendor>
 
   <description>
     <![CDATA[
@@ -29,6 +29,10 @@
 
   <change-notes>
     <![CDATA[
+
+      <p>v0.1.5 [28.02.2020]<br>
+      <em>- Improved a line marker icon</em><br>
+      </p>
 
       <p>v0.1.4 [19.02.2020]<br>
       <em>- Deleted unused dependencies</em><br>
